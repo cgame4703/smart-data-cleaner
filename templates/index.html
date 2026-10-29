@@ -1,0 +1,86 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smart Data Cleaner</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f3f6fb;color:#172033;font-family:Arial,sans-serif}
+main{max-width:1050px;margin:40px auto;padding:20px}
+header{text-align:center;margin-bottom:28px}
+header h1{font-size:34px;margin-bottom:8px;color:#193b70}
+header p{color:#68758a}
+.card{background:white;padding:25px;border-radius:16px;margin-bottom:22px;box-shadow:0 5px 24px #152b4b0c}
+.upload{border:2px dashed #9bb6dc;border-radius:12px;padding:28px;text-align:center;background:#f8fbff}
+input[type=file]{max-width:100%;margin:15px}
+.options{display:flex;gap:20px;flex-wrap:wrap;margin:22px 0}
+button,.download{background:#235cc5;color:white;padding:12px 20px;border:0;border-radius:9px;cursor:pointer;font-weight:bold;text-decoration:none;display:inline-block}
+label{color:#334155}
+.error{color:#b42318;background:#fff0ef;padding:12px;border-radius:8px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:12px}
+.stat{background:#f0f5ff;padding:17px;border-radius:10px}
+.stat strong{font-size:25px;display:block;color:#235cc5;margin-top:8px}
+.table-wrap{overflow:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:11px;border-bottom:1px solid #e5eaf2;text-align:left;white-space:nowrap}
+th{background:#edf3fc}
+@media(max-width:600px){main{margin:15px auto;padding:12px}header h1{font-size:27px}.card{padding:17px}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<h1>Smart Data Cleaner</h1>
+<p>Clean messy spreadsheet data in a few clicks.</p>
+</header>
+
+<section class="card">
+<h2>Upload your dataset</h2>
+<p>Supported formats: CSV and Excel (.xlsx). Maximum file size: 10 MB.</p>
+<form method="post" enctype="multipart/form-data">
+<div class="upload">
+<input type="file" name="file" accept=".csv,.xlsx" required>
+</div>
+<div class="options">
+<label><input type="checkbox" name="duplicates" value="yes" checked> Remove duplicate rows</label>
+<label><input type="checkbox" name="spaces" value="yes" checked> Trim extra spaces</label>
+<label><input type="checkbox" name="missing" value="yes"> Fill missing values</label>
+</div>
+<button type="submit">Clean My Data</button>
+</form>
+{% if error %}<p class="error">{{ error }}</p>{% endif %}
+</section>
+
+{% if stats %}
+<section class="card">
+<h2>Cleaning Report</h2>
+<div class="stats">
+<div class="stat">Rows before<strong>{{ stats.rows_before }}</strong></div>
+<div class="stat">Rows after<strong>{{ stats.rows_after }}</strong></div>
+<div class="stat">Duplicates removed<strong>{{ stats.duplicates_removed }}</strong></div>
+<div class="stat">Missing values before<strong>{{ stats.missing_before }}</strong></div>
+<div class="stat">Missing values after<strong>{{ stats.missing_after }}</strong></div>
+<div class="stat">Columns<strong>{{ stats.columns }}</strong></div>
+</div>
+<p style="margin-top:22px"><a class="download" href="/download">Download Cleaned File</a></p>
+</section>
+
+<section class="card">
+<h2>Data Preview (first 100 rows)</h2>
+<div class="table-wrap">
+<table>
+<thead><tr>{% for col in columns %}<th>{{ col }}</th>{% endfor %}</tr></thead>
+<tbody>
+{% for row in preview %}
+<tr>{% for col in columns %}<td>{{ row[col] }}</td>{% endfor %}</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</section>
+{% endif %}
+</main>
+</body>
+</html>
